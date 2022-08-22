@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         java: [15]
     steps:
       - uses: actions/checkout@v2
@@ -44,9 +44,23 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven
         run: ./mvnw clean install -DskipTests=true
-      - run: mkdir staging && cp webgoat-server/target/webgoat-server-8.2.1-SNAPSHOT.jar staging
-      - uses: actions/upload-artifact@v3
+      # Run Contrast Scan
+      - name: Contrast Scan Action
+        uses: Contrast-Security-OSS/contrastscan-action@v2
         with:
-          name: Package
-          path: staging
+          artifact: webgoat-server/target/webgoat-server-8.2.1-SNAPSHOT.jar
+          apiKey: ${{ secrets.CONTRAST_API_KEY }}
+          orgId: ${{ secrets.CONTRAST_ORGANIZATION_ID }}
+          authHeader: ${{ secrets.CONTRAST_AUTH_HEADER }}
+          
+      # Show SARIF results
+      - name: Show SARIF
+        run: |
+          cat results.sarif
+
+      # Upload the results to GitHub      
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
       
