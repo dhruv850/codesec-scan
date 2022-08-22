@@ -52,15 +52,5 @@ jobs:
           apiKey: ${{ secrets.CONTRAST_API_KEY }}
           orgId: ${{ secrets.CONTRAST_ORGANIZATION_ID }}
           authHeader: ${{ secrets.CONTRAST_AUTH_HEADER }}
-          
-      # Show SARIF results
-      - name: Show SARIF
-        run: |
-          cat results.sarif
 
-      # Upload the results to GitHub      
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: results.sarif
       
