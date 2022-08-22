@@ -17,10 +17,10 @@ jobs:
     - name: Setup Java JDK
       uses: actions/setup-java@v2
       with:
-        distribution: 'zulu'
+        distribution: 'temurin'
         java-version: '17'
     - name: build
-      run: ./mvnw clean install
+      run: ./mvnw clean install -DskipTests=true
     # ...
     # Scan Artifact    
     # - name: Contrast Scan Action
